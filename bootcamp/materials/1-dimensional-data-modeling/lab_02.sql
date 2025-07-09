@@ -78,6 +78,9 @@ on w.player_name = s.player_name;
 -- 					end_season INTEGER
 -- )
 
+-- incremental query, the is_active and scoring_class can change
+
+
 WITH last_season_scd AS(
 	
 		SELECT *
@@ -94,6 +97,7 @@ WITH last_season_scd AS(
 				end_season
 		FROM player_scd
 		WHERE current_season = 2021
+		AND end_season < 2021
 ),
 	this_season AS(
 
@@ -101,6 +105,9 @@ WITH last_season_scd AS(
 		FROM players_auto
 		WHERE current_season = 2022
 ), 
+	/*
+	For recorsd that don't change. it only add current season to end season
+	*/
 	unchanged_records AS(
 
 		SELECT ts.player_name,
@@ -140,7 +147,7 @@ WITH last_season_scd AS(
 		OR ts.is_active <> ls.is_active)
 ),
 	unnested_changed_records AS (
-		--flatten the struct
+		--flatten the struct and the previous and current season stats will show
 		SELECT player_name,
 			(records::scd_type).scoring_class,
 			(records::scd_type).is_active,
