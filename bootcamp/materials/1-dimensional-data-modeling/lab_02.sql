@@ -107,6 +107,8 @@ WITH last_season_scd AS(
 ), 
 	/*
 	For recorsd that don't change. it only add current season to end season
+	So the query will have to scan only on last season record to compare the changes with current season,
+	It can minimize the query time
 	*/
 	unchanged_records AS(
 
@@ -121,6 +123,7 @@ WITH last_season_scd AS(
 		WHERE ts.scoring_class = ls.scoring_class
 		AND ts.is_active = ls.is_active
 ),
+
 	changed_records AS(
 
 		SELECT ts.player_name,
